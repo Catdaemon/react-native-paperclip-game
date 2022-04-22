@@ -21,7 +21,6 @@ export function numberFormatter(num: number, digits: number) {
         : '0'
 }
 
-// https://stackoverflow.com/questions/9461621/format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900
 export function lengthFormatter(num: number, digits: number) {
     const lookup = [
         { value: 1, symbol: 'cm' },
