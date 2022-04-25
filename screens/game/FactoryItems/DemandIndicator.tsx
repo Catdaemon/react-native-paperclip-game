@@ -19,10 +19,10 @@ const BarContainer = styled.View`
     height: 32px;
 `
 
-const DemandStyle: ViewStyle = {
-    height: '100%',
-    backgroundColor: 'green',
-}
+const DemandBar = styled(Animated.View)`
+    height: 100%;
+    background-color: green;
+`
 
 const Icon = styled.Text`
     margin: 8px 8px;
@@ -51,17 +51,13 @@ const DemandIndicator = () => {
             <DemandRow>
                 <Icon>🫤</Icon>
                 <BarContainer>
-                    <Animated.View
-                        style={[
-                            DemandStyle,
-                            ,
-                            {
-                                width: widthAnim.interpolate({
-                                    inputRange: [0, 1],
-                                    outputRange: ['0%', '100%'],
-                                }),
-                            },
-                        ]}
+                    <DemandBar
+                        style={{
+                            width: widthAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: ['0%', '100%'],
+                            }),
+                        }}
                     />
                 </BarContainer>
                 <Icon>🤑</Icon>
