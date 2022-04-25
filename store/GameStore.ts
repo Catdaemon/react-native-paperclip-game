@@ -51,7 +51,7 @@ export const defaultState = {
     paperclips: 0,
     totalPaperclips: 0,
     paperclipsSold: 0,
-    wireLength: 1000,
+    wireLength: 100,
     money: 0,
     price: 0.05,
     history: [],
