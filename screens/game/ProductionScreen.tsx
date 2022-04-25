@@ -108,11 +108,11 @@ export function ProductionScreen() {
                 />
                 <Button
                     primary
-                    text={`Buy wire (1m for £${wirePrice})`}
+                    text={`Buy wire (1m for £${wirePrice.toFixed(2)})`}
                     onPress={() => buyWirePressed()}
                 />
                 <RangeInput
-                    label={`Price: £${currentPrice}`}
+                    label={`Price: £${currentPrice.toFixed(2)}`}
                     min={0.01}
                     max={5}
                     onChange={(val) => setPrice(Math.round(val * 100) / 100)}

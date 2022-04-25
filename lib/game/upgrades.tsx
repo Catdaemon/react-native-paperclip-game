@@ -24,6 +24,6 @@ export const upgradeList: upgradeList = {
     wireBuyer: {
         label: 'Wire Buyer',
         description: 'Automatically buys wire when you run out.',
-        price: 50,
+        price: 200,
     },
 }

@@ -42,7 +42,7 @@ export function useGameTick() {
         const state = useGameStore.getState()
 
         const currentPrice = state.price
-        const popularity = 2 // TODO: make this based off "marketing" upgrades
+        const popularity = 1 + state.popularity
 
         const popularityFactor = currentPrice / popularity // The higher the popularity, the lower the impact of price
 
@@ -67,11 +67,19 @@ export function useGameTick() {
         if (wirePrice < 1) {
             setWirePrice(1)
         }
-        const wirePriceInterval = 500
+
+        // Faster interval and decline when we're in a dead state
+        const dead = state.wireLength == 0 && state.paperclips === 0
+        const declineAmount = dead ? 0.05 : 0.01
+        const wirePriceInterval = dead ? 0 : 500
+
+        // Decrease wire price over time
         if (lastWirePriceTick.current + wirePriceInterval < Date.now()) {
             lastWirePriceTick.current = Date.now()
             if (wirePrice > 1) {
-                setWirePrice(Math.round((wirePrice - 0.01) * 100) / 100)
+                setWirePrice(
+                    Math.round((wirePrice - declineAmount) * 100) / 100
+                )
             }
         }
 

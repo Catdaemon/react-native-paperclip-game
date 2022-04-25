@@ -38,17 +38,28 @@ const BoughtUpgrade = styled.Text`
 `
 
 export function UpgradesScreen() {
-    const [upgrades, money, addMoney, addUpgrade, autoClipperQty, addClipper] =
-        useGameStore((state) => [
-            state.upgrades,
-            state.money,
-            state.addMoney,
-            state.addUpgrade,
-            state.autoClippers,
-            state.addAutoClipper,
-        ])
+    const [
+        upgrades,
+        money,
+        addMoney,
+        addUpgrade,
+        autoClipperQty,
+        addClipper,
+        addPopularity,
+        popularity,
+    ] = useGameStore((state) => [
+        state.upgrades,
+        state.money,
+        state.addMoney,
+        state.addUpgrade,
+        state.autoClippers,
+        state.addAutoClipper,
+        state.addPopularity,
+        state.popularity,
+    ])
     const potentialUpgrades = Object.keys(upgradeList) as upgradeType[]
-    const clipperPrice = 10
+    const clipperPrice = 100 * autoClipperQty
+    const marketingPrice = 100 * popularity
 
     const buy = (type: upgradeType) => {
         const upgrade = upgradeList[type]
@@ -67,6 +78,16 @@ export function UpgradesScreen() {
             Haptics.selectionAsync()
             addMoney(clipperPrice * -1)
             addClipper()
+        } else {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        }
+    }
+
+    const buyMarketing = () => {
+        if (money >= marketingPrice) {
+            Haptics.selectionAsync()
+            addMoney(marketingPrice * -1)
+            addPopularity(1)
         } else {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         }
@@ -105,7 +126,10 @@ export function UpgradesScreen() {
                 <Row>
                     <DescriptionColumn>
                         <Header3>Additional Clip Machine</Header3>
-                        <BodyText>You current have {autoClipperQty}</BodyText>
+                        <BodyText>
+                            Buy more machines! You currently have{' '}
+                            {autoClipperQty}.
+                        </BodyText>
                     </DescriptionColumn>
                     <PriceColumn>
                         <Button
@@ -116,6 +140,22 @@ export function UpgradesScreen() {
                     </PriceColumn>
                 </Row>
             )}
+            <Row>
+                <DescriptionColumn>
+                    <Header3>Marketing</Header3>
+                    <BodyText>
+                        Let people know the benefits of your paperclips. Current
+                        popularity level is {popularity}.
+                    </BodyText>
+                </DescriptionColumn>
+                <PriceColumn>
+                    <Button
+                        success
+                        text={`£${marketingPrice}`}
+                        onPress={() => buyMarketing()}
+                    />
+                </PriceColumn>
+            </Row>
         </LayoutContainer>
     )
 }

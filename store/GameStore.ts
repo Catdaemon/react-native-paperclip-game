@@ -26,6 +26,7 @@ export interface GameState {
     upgrades: upgradeType[]
     autoClippers: number
     maxAutoBuyPrice: number
+    popularity: number
     addPaperclips: (number: number) => void
     addMoney: (amount: number) => void
     addHistoryEvent: () => void
@@ -34,6 +35,7 @@ export interface GameState {
     setWirePrice: (amount: number) => void
     setPrice: (newPrice: number) => void
     setDemand: (newDemand: number) => void
+    addPopularity: (newPopularity: number) => void
     setMaxBuyPrice: (newPrice: number) => void
     startGame: (businessName: string) => void
     recordSale: (number: number) => void
@@ -58,6 +60,7 @@ export const defaultState = {
     upgrades: [],
     autoClippers: 1,
     maxAutoBuyPrice: 10,
+    popularity: 1,
 }
 
 export const useGameStore = create(
@@ -77,6 +80,8 @@ export const useGameStore = create(
                 set({ paperclipsSold: get().paperclipsSold + number }),
             addMoney: (amount) => set({ money: get().money + amount }),
             setPrice: (newPrice) => set({ price: newPrice }),
+            addPopularity: (increase) =>
+                set({ popularity: get().popularity + increase }),
             setMaxBuyPrice: (newPrice) => set({ maxAutoBuyPrice: newPrice }),
             setWirePrice: (newPrice) => set({ wirePrice: newPrice }),
             setDemand: (newDemand) => set({ demand: newDemand }),
