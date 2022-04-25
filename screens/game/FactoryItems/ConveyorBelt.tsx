@@ -40,7 +40,7 @@ const Conveyor = () => {
         if (newClips.length > 8) {
             newClips.pop()
         }
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
         setClips(newClips)
     }, [totalClips])
 

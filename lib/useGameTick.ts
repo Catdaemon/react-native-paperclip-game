@@ -24,6 +24,8 @@ export function useGameTick() {
 
     const interval = useRef<ReturnType<typeof setInterval> | null>(null)
     const lastHistoryTime = useRef(0)
+    const lastAutoWireTime = useRef(0)
+    const lastWirePriceTick = useRef(0)
 
     // If the current demand is less than 1 unit, we should store the fractions up until one can be sold
     const pentDemand = useRef(0)
@@ -62,17 +64,39 @@ export function useGameTick() {
 
         // Wire price
         const wirePrice = state.wirePrice
-        if (wirePrice < 10) {
-            setWirePrice(10)
+        if (wirePrice < 1) {
+            setWirePrice(1)
         }
-        if (wirePrice > 10) {
-            setWirePrice(Math.round((wirePrice - 0.01) * 100) / 100)
+        const wirePriceInterval = 500
+        if (lastWirePriceTick.current + wirePriceInterval < Date.now()) {
+            lastWirePriceTick.current = Date.now()
+            if (wirePrice > 1) {
+                setWirePrice(Math.round((wirePrice - 0.01) * 100) / 100)
+            }
         }
 
+        // History
         const historyInterval = 5000
         if (lastHistoryTime.current + historyInterval < Date.now()) {
             lastHistoryTime.current = Date.now()
             addHistoryEvent()
+        }
+
+        // Auto Clipper
+        const autoInterval = 500 / state.autoClippers
+        if (
+            state.upgrades.includes('autoClipper') &&
+            lastAutoWireTime.current + autoInterval < Date.now()
+        ) {
+            lastAutoWireTime.current = Date.now()
+            state.makeClip()
+        }
+
+        // Auto buyer
+        if (state.wireLength <= 0 && state.upgrades.includes('wireBuyer')) {
+            if (state.wirePrice <= state.maxAutoBuyPrice) {
+                state.buyWire()
+            }
         }
     }
 

@@ -10,18 +10,20 @@ export interface ButtonProps {
 
 export interface ButtonStyleProps {
     primary?: boolean
+    success?: boolean
 }
 
 const ButtonBox = styled.View<ButtonStyleProps>`
     border-radius: 8px;
     border: 2px solid black;
     padding: 12px;
-    background-color: ${(props) => (props.primary ? 'white' : 'transparent')};
+    background-color: ${(props) =>
+        props.primary ? 'white' : props.success ? 'green' : 'transparent'};
     margin-bottom: 8px;
 `
 
-const ButtonText = styled(BodyText)`
-    color: black;
+const ButtonText = styled(BodyText)<ButtonStyleProps>`
+    color: ${(props) => (props.success ? 'white' : 'black')};
     text-align: center;
     font-size: 18px;
 `
@@ -29,7 +31,7 @@ const ButtonText = styled(BodyText)`
 export function Button({
     onPress,
     text,
-    primary,
+    ...props
 }: ButtonProps & ButtonStyleProps) {
     return (
         <MotiPressable
@@ -46,8 +48,8 @@ export function Button({
                 []
             )}
         >
-            <ButtonBox primary={primary}>
-                <ButtonText>{text}</ButtonText>
+            <ButtonBox {...props}>
+                <ButtonText {...props}>{text}</ButtonText>
             </ButtonBox>
         </MotiPressable>
     )

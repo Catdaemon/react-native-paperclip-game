@@ -21,6 +21,7 @@ import { DefaultTheme, DarkTheme } from '@react-navigation/native'
 import NotFoundScreen from './NotFoundScreen'
 import ModalScreen from './ModalScreen'
 import { StatsScreen } from './game/StatsScreen'
+import { UpgradesScreen } from './game/UpgradesScreen'
 
 export type RootStackParamList = {
     Root: NavigatorScreenParams<RootTabParamList> | undefined
@@ -112,7 +113,7 @@ function BottomTabNavigator() {
             />
             <BottomTabs.Screen
                 name="UpgradesTab"
-                component={ProductionScreen}
+                component={UpgradesScreen}
                 options={{
                     title: 'Upgrades',
                     tabBarIcon: ({ color }) => (

@@ -1,18 +1,16 @@
-import { AnimatePresence, MotiView, useAnimationState } from 'moti'
-import React, { useEffect, useState } from 'react'
-import { LayoutAnimation, View } from 'react-native'
+import * as Haptics from 'expo-haptics'
+import React from 'react'
 import styled from 'styled-components/native'
+import shallow from 'zustand/shallow'
 import { Button } from '../../components/Button'
+import { RangeInput } from '../../components/RangeInput'
+import { BodyText } from '../../components/Typography'
 import { useGameStore } from '../../store/GameStore'
 import { ClipInventory } from './FactoryItems/ClipInventory'
 import { Conveyor } from './FactoryItems/ConveyorBelt'
-import { WireInventory } from './FactoryItems/WireInventory'
-import * as Haptics from 'expo-haptics'
-import { MoneyDisplay } from './FactoryItems/MoneyDisplay'
-import { RangeInput } from '../../components/RangeInput'
-import shallow from 'zustand/shallow'
 import { DemandIndicator } from './FactoryItems/DemandIndicator'
-import { BodyText } from '../../components/Typography'
+import { MoneyDisplay } from './FactoryItems/MoneyDisplay'
+import { WireInventory } from './FactoryItems/WireInventory'
 
 const LayoutContainer = styled.View`
     width: 100%;
@@ -49,6 +47,11 @@ export function ProductionScreen() {
         currentWire,
         wirePrice,
         money,
+        upgrades,
+        makeClip,
+        buyWire,
+        maxAutoBuyPrice,
+        setMaxBuyPrice,
     ] = useGameStore(
         (state) => [
             state.addPaperclips,
@@ -60,26 +63,26 @@ export function ProductionScreen() {
             state.wireLength,
             state.wirePrice,
             state.money,
+            state.upgrades,
+            state.makeClip,
+            state.buyWire,
+            state.maxAutoBuyPrice,
+            state.setMaxBuyPrice,
         ],
         shallow
     )
 
-    const makeClip = () => {
-        if (currentWire >= 1) {
-            addWire(-1)
-            addClips(1)
-            Haptics.selectionAsync()
+    const makeClipPressed = () => {
+        if (makeClip()) {
+            Haptics.impactAsync()
         } else {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         }
     }
 
-    const buyWire = () => {
-        if (money >= wirePrice) {
-            addWire(100)
-            addMoney(wirePrice * -1)
-            setWirePrice(wirePrice * 1.5)
-            Haptics.selectionAsync()
+    const buyWirePressed = () => {
+        if (buyWire()) {
+            Haptics.impactAsync()
         } else {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         }
@@ -95,18 +98,18 @@ export function ProductionScreen() {
                     <MoneyDisplay />
                 </Row>
                 <Conveyor />
-                <DemandIndicator />
+                {upgrades.includes('marketResearch') && <DemandIndicator />}
             </GraphicContainer>
             <ControlsContainer>
                 <Button
                     primary
                     text="Make paperclip"
-                    onPress={() => makeClip()}
+                    onPress={() => makeClipPressed()}
                 />
                 <Button
                     primary
                     text={`Buy wire (1m for £${wirePrice})`}
-                    onPress={() => buyWire()}
+                    onPress={() => buyWirePressed()}
                 />
                 <RangeInput
                     label={`Price: £${currentPrice}`}
@@ -115,6 +118,17 @@ export function ProductionScreen() {
                     onChange={(val) => setPrice(Math.round(val * 100) / 100)}
                     value={currentPrice}
                 />
+                {upgrades.includes('wireBuyer') && (
+                    <RangeInput
+                        label={`Max wire buy price: £${maxAutoBuyPrice}`}
+                        min={1}
+                        max={100}
+                        onChange={(val) =>
+                            setMaxBuyPrice(Math.round(val * 100) / 100)
+                        }
+                        value={currentPrice}
+                    />
+                )}
             </ControlsContainer>
         </LayoutContainer>
     )

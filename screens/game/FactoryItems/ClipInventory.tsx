@@ -64,13 +64,9 @@ const ClipInventory = () => {
                         <MotiView
                             key={time}
                             from={{
-                                opacity: 1,
-                                scale: 1,
                                 translateY: 0,
                             }}
                             animate={{
-                                opacity: 0,
-                                scale: 0.5,
                                 translateY: -100,
                             }}
                         >

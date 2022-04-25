@@ -1,6 +1,7 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { upgradeType } from '../lib/game/upgrades'
 
 export interface HistorySnapshot {
     time: Date
@@ -22,15 +23,23 @@ export interface GameState {
     skipIntro: boolean
     businessName: string
     wirePrice: number
+    upgrades: upgradeType[]
+    autoClippers: number
+    maxAutoBuyPrice: number
     addPaperclips: (number: number) => void
     addMoney: (amount: number) => void
     addHistoryEvent: () => void
     addWire: (length: number) => void
+    addAutoClipper: () => void
     setWirePrice: (amount: number) => void
     setPrice: (newPrice: number) => void
     setDemand: (newDemand: number) => void
+    setMaxBuyPrice: (newPrice: number) => void
     startGame: (businessName: string) => void
     recordSale: (number: number) => void
+    addUpgrade: (upgradeType: upgradeType) => void
+    makeClip: () => boolean
+    buyWire: () => boolean
     resetGame: () => void
 }
 
@@ -46,6 +55,9 @@ export const defaultState = {
     history: [],
     wirePrice: 10,
     demand: 0,
+    upgrades: [],
+    autoClippers: 1,
+    maxAutoBuyPrice: 10,
 }
 
 export const useGameStore = create(
@@ -65,9 +77,11 @@ export const useGameStore = create(
                 set({ paperclipsSold: get().paperclipsSold + number }),
             addMoney: (amount) => set({ money: get().money + amount }),
             setPrice: (newPrice) => set({ price: newPrice }),
+            setMaxBuyPrice: (newPrice) => set({ maxAutoBuyPrice: newPrice }),
             setWirePrice: (newPrice) => set({ wirePrice: newPrice }),
             setDemand: (newDemand) => set({ demand: newDemand }),
             addWire: (amount) => set({ wireLength: get().wireLength + amount }),
+            addAutoClipper: () => set({ autoClippers: get().autoClippers + 1 }),
             addHistoryEvent: () => {
                 const current = get()
                 const newEvent = {
@@ -84,6 +98,28 @@ export const useGameStore = create(
                     history.shift()
                 }
                 set({ history: history })
+            },
+            addUpgrade: (newUpgrade) => get().upgrades.push(newUpgrade),
+            makeClip: () => {
+                const state = get()
+                if (state.wireLength >= 1) {
+                    state.addWire(-1)
+                    state.addPaperclips(1)
+                    return true
+                } else {
+                    return false
+                }
+            },
+            buyWire: () => {
+                const state = get()
+                if (state.money >= state.wirePrice) {
+                    state.addWire(100)
+                    state.addMoney(state.wirePrice * -1)
+                    state.setWirePrice(state.wirePrice * 1.5)
+                    return true
+                } else {
+                    return false
+                }
             },
             startGame: (businessName) => {
                 set({ skipIntro: true, businessName: businessName })

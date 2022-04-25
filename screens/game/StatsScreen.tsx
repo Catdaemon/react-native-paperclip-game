@@ -33,7 +33,7 @@ export function StatsScreen() {
 
     return (
         <LayoutContainer>
-            <VictoryChart domain={{ y: [0, 1] }} height={600}>
+            <VictoryChart domain={{ y: [0, 100] }} height={600}>
                 <VictoryGroup
                     offset={0}
                     colorScale={'qualitative'}

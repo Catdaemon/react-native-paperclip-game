@@ -15,6 +15,7 @@ const Container = styled.View`
     padding: 12px;
     background-color: white;
     border-radius: 4px;
+    margin-bottom: 8px;
 `
 
 const Label = styled(BodyText)`
