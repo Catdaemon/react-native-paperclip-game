@@ -63,9 +63,10 @@ export function useGameTick() {
         }
 
         // Wire price
+        const minWirePrice = 5
         const wirePrice = state.wirePrice
-        if (wirePrice < 1) {
-            setWirePrice(1)
+        if (wirePrice < minWirePrice) {
+            setWirePrice(minWirePrice)
         }
 
         // Faster interval and decline when we're in a dead state
@@ -76,7 +77,7 @@ export function useGameTick() {
         // Decrease wire price over time
         if (lastWirePriceTick.current + wirePriceInterval < Date.now()) {
             lastWirePriceTick.current = Date.now()
-            if (wirePrice > 1) {
+            if (wirePrice > minWirePrice) {
                 setWirePrice(
                     Math.round((wirePrice - declineAmount) * 100) / 100
                 )
